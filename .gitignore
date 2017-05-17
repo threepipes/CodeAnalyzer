@@ -1,0 +1,12 @@
+/.gradle/
+/.settings/
+/.vscode/
+/bin/
+/build/
+
+/src/main/antlr/
+/src/main/java/cpp/
+/src/test/resources/
+
+.classpath
+.project
