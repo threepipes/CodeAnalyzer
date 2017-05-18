@@ -1,6 +1,12 @@
 package analyzer;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 public class CodeAnalyzer {
 	public static void main(String[] args) {
@@ -17,15 +23,16 @@ public class CodeAnalyzer {
 	public CodeAnalyzer(String[] args) {
 		try {
 			option = argParser(args);
-		} catch (IllegalArgumentException e) {
-			System.err.println(e);
+			setLogger();
+		} catch (IllegalArgumentException | FileNotFoundException e) {
+			Logger.getGlobal().log(Level.SEVERE, e.toString());
 			usage();
 		}
 	}
 	
 	public void usage() {
 		String usage = "<java command> argkey0=argvalue0 argkey1=argvalue1 ...";
-		System.out.println(usage);
+		System.err.println(usage);
 	}
 	
 	public HashMap<String, String> argParser(String[] args) throws IllegalArgumentException {
@@ -44,6 +51,56 @@ public class CodeAnalyzer {
 	}
 	
 	public void execute() {
-		
+		String taskName = option.getOrDefault("task", "");
+		Task task = Task.getTask(taskName);
+		task.setIO(option.get("inpath"), option.get("outpath"));
+		Logger.getGlobal().log(Level.FINEST, "start task: " + task);
+		task.doTask(option);
+		task.close();
+	}
+	
+	public void setLogger() throws FileNotFoundException {
+		Logger log = Logger.getGlobal();
+		final Level level;
+		final OutputStream out;
+		switch(option.getOrDefault("logfile", "none")) {
+		case "file":
+			out = new FileOutputStream("./log.txt");
+			break;
+		case "err":
+			out = System.err;
+			break;
+		default:
+			out = null;
+		}
+		switch(option.getOrDefault("loglevel", "default")) {
+		case "all":
+			level = Level.ALL;
+			break;
+		default:
+			level = Level.INFO;
+		}
+		log.addHandler(new StreamHandler(){
+			{
+				if(out != null) setOutputStream(out);
+				setLevel(level);
+			}
+		});
+		log.setUseParentHandlers(false);
+		log.setLevel(level);
 	}
 }
+
+/*
+ * memo
+ *   option
+ *     task:
+ *       lexer
+ *       diff
+ *       dist --- ngram, syntax
+ *     outpath:
+ *       出力パス
+ *     inpath:
+ *       入力パス
+ * 
+ */

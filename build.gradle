@@ -1,11 +1,23 @@
 import groovy.io.FileType
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
+    }
+}
+
 plugins {
     id 'java'
     id 'antlr'
     id 'eclipse'
     id 'de.undercouch.download' version '3.2.0'
 }
+
+apply plugin: 'eu.appsatori.fatjar'
 
 repositories {
     mavenCentral()
@@ -22,6 +34,13 @@ compileJava {
 }
 
 jar {
+    manifest {
+        attributes 'Main-Class': 'analyzer.CodeAnalyzer'
+    }
+}
+
+fatJar {
+    baseName = 'analyzer'
     manifest {
         attributes 'Main-Class': 'analyzer.CodeAnalyzer'
     }
