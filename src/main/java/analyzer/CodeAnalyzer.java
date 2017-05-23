@@ -3,6 +3,7 @@ package analyzer;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +37,7 @@ public class CodeAnalyzer {
 	}
 	
 	public HashMap<String, String> argParser(String[] args) throws IllegalArgumentException {
+		Logger.getGlobal().finest("Get args: " + Arrays.toString(args));
 		HashMap<String, String> option = new HashMap<>();
 		String errorMsg = "引数の形式が違います";
 		for(String arg: args) {
