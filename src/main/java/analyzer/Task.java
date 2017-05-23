@@ -6,12 +6,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import analyzer.dist.DistanceCalculator;
+import analyzer.dist.NGram;
 import analyzer.dist.SyntacticAnalyzer;
 import utils.Printer;
 import utils.Reader;
 
 public abstract class Task {
-	public static final String NAME = "Task"; 
+	public static final String NAME = "Task";
+	protected static Logger log = Logger.getGlobal();
 	public static Task getTask(String name) {
 		switch(name) {
 		case LexerTask.NAME:
@@ -66,6 +68,37 @@ class LexerTask extends Task {
 	}
 }
 
+class NGramTask extends Task {
+	public static final String NAME = "ngram";
+	private static final String DEFAULT_WHITELIST = "whitelist.list";
+	@Override
+	public void doTask(HashMap<String, String> option) {
+		String nValue = option.get("n");
+		final int n = toInt(nValue);
+		if(n <= 0) {
+			log.severe("Illegal value of n: " + nValue);
+			return;
+		}
+		String whitelistFile = option.getOrDefault("whitelist.txt", DEFAULT_WHITELIST);
+		
+		double[][] dist = getResult(whitelistFile, n);
+		out.printlnJson(dist);
+	}
+	
+	protected double[][] getResult(String whitelistFile, int n) {
+		return new NGram(whitelistFile, n).getDistanceTable(in.readAllLines());
+	}
+	
+	private int toInt(String value) {
+		if(value == null) return 0;
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+}
+
 class DistanceTask extends Task {
 	public static final String NAME = "dist"; 
 	
@@ -73,7 +106,7 @@ class DistanceTask extends Task {
 	public void doTask(HashMap<String, String> option) {
 		String method = option.get("method");
 		if(method == null) {
-			Logger.getGlobal().log(Level.SEVERE, "no method chosen");
+			log.severe("no method chosen");
 			return;
 		}
 		DistanceCalculator calc = null;
@@ -83,7 +116,7 @@ class DistanceTask extends Task {
 			break;
 		}
 		if(calc == null) {
-			Logger.getGlobal().log(Level.SEVERE, "wrong method name: " + method);
+			log.severe("wrong method name: " + method);
 			return;
 		}
 		

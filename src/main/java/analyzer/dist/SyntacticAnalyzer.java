@@ -12,8 +12,7 @@ public class SyntacticAnalyzer extends DistanceCalculator {
 	List<AutoMaton> analyzers;
 	HashSet<String> whitelist;
 	public SyntacticAnalyzer(HashMap<String, String> option) {
-		String whitelistFile = option.get("whitelist");
-		if(whitelistFile == null) whitelistFile = "whitelist.txt";
+		String whitelistFile = option.getOrDefault("whitelist", "whitelist.txt");
 		String automaton = option.get("automatons");
 		analyzers = AutoMaton.getter(automaton);
 
