@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 
 import net.arnx.jsonic.JSON;
 
@@ -24,6 +25,11 @@ public class Printer extends PrintWriter{
 	
 	public void printlnJson(double[][] arr) {
 		String jsonStr = JSON.encode(arr);
+		this.println(jsonStr);
+	}
+	
+	public void printlnJson(Collection obj) {
+		String jsonStr = JSON.encode(obj);
 		this.println(jsonStr);
 	}
 }

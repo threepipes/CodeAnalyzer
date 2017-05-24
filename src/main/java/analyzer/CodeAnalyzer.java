@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
+import task.Task;
+
 public class CodeAnalyzer {
 	public static void main(String[] args) {
 		CodeAnalyzer tool = new CodeAnalyzer(args);
