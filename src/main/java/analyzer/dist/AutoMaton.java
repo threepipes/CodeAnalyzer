@@ -1,5 +1,6 @@
 package analyzer.dist;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public interface AutoMaton {
@@ -14,29 +15,38 @@ public interface AutoMaton {
 			list.add(new IndentCounter());
 		} else {
 			String[] select = option.split(",");
-			// TODO select[]からインスタンス生成
+			for(String choice: select) {
+				switch(choice) {
+				case IfCounter.NAME:
+					list.add(new IfCounter());
+					break;
+				case IndentCounter.NAME:
+					list.add(new IndentCounter());
+					break;
+				}
+			}
 		}
 		return list;
 	}
 }
 
 class IndentCounter implements AutoMaton {
+	public static final String NAME = "indent";
 	/**
 	 * ブロック内のみインデントを数える
 	 *  -> if後の単一文などは，ifとまとめて1文とする
 	 */
 	private int depth;
-	private ListVector indents;
+//	private ListVector indents;
+	private int[] indents;
 	public IndentCounter() {
 		depth = 0;
-		indents = new ListVector();
-		indents.add(0);
+		indents = new int[10];
 	}
 	
 	@Override
 	public void reset() {
-		indents.clear();
-		indents.add(0);
+		Arrays.fill(indents, 0);
 		depth = 0;
 	}
 	
@@ -44,20 +54,19 @@ class IndentCounter implements AutoMaton {
 	public void readToken(String token) {
 		if(token.equals("{")) {
 			depth++;
-			if(indents.size() < depth + 1) indents.add(0);
 		} else if(token.equals("}")) {
 			depth--;
 		}
 		
 		if(token.equals(";") || token.equals("{")) {
 			// "}"も追加すべきかは議論
-			indents.set(depth, indents.get(depth) + 1);
+			indents[Math.min(9, depth)]++;
 		}
 	}
 	
 	@Override
 	public Vector getValue() {
-		return indents;
+		return new ListVector(indents);
 	}
 	
 	@Override
@@ -67,6 +76,7 @@ class IndentCounter implements AutoMaton {
 }
 
 class IfCounter implements AutoMaton {
+	public static final String NAME = "if";
 	private int counter;
 	public IfCounter() {
 		counter = 0;
@@ -128,6 +138,14 @@ class ListVector extends ArrayList<Integer> implements Vector {
 		final double denom = Math.sqrt(denom1) * Math.sqrt(denom2);
 		if(denom == 0) return 0;
 		return 1 - numer / denom;
+	}
+	
+	public int[] toIntArray() {
+		int[] result = new int[this.size()];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = this.get(i);
+		}
+		return result;
 	}
 	
 	private static int sq(int a) {

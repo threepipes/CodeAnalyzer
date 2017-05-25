@@ -38,6 +38,10 @@ public class NGram extends DistanceCalculator {
 		initIdTable();
 	}
 	
+	protected HashSet<String> getWhitelist() {
+		return (HashSet<String>) whitelist.clone();
+	}
+	
 	@Override
 	protected Vector vectorize(List<String> tokens) {
 		NGramVector vector = new NGramVector();
