@@ -35,6 +35,31 @@ public class CodeAnalyzer {
 	
 	public void usage() {
 		String usage = "<java command> argkey0=argvalue0 argkey1=argvalue1 ...";
+		/*
+		 * 現在の設定([]内はargkey, "-"はargvalue)
+		 * [inpath]: 入力ファイル(なしなら標準入力)
+		 * [outpath]: 出力ファイル(なしなら標準出力)
+		 * [logfile]: ログ出力(なしなら行わない)
+		 *   - file: "./log.txt"に出力
+		 *   - err: 標準エラー出力
+		 * [loglevel]: ログレベル(なしでINFOまで)
+		 *   - all: 全部
+		 * [task]: 行うタスク
+		 *   - lexer
+		 *   - dist
+		 *     [method]: 距離の定義をどうするか
+		 *       - syntax: 字句的な距離
+		 *         [whitelist]: $に変換しないトークンリスト(なしでwhitelist.txt)
+		 *         [automatons]: ","区切りで文法方式指定
+		 *           - indent: ネストをベクトル化
+		 *           - if: ifの数
+		 *   - diff
+		 *   - test
+		 *   - ngram
+		 *     [n]: トークン区切り数
+		 *     [whitelist]: $に変換しないトークンリスト(なしでwhitelist.list)
+		 *   - ngcount
+		 */
 		System.err.println(usage);
 	}
 	
@@ -94,17 +119,3 @@ public class CodeAnalyzer {
 		log.setLevel(level);
 	}
 }
-
-/*
- * memo
- *   option
- *     task:
- *       lexer
- *       diff
- *       dist --- ngram, syntax
- *     outpath:
- *       出力パス
- *     inpath:
- *       入力パス
- * 
- */
