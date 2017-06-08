@@ -38,4 +38,21 @@ public class Reader extends BufferedReader {
 		}
 		return list;
 	}
+
+	public List<String[]> readCsvLike(String separator) {
+		Logger log = Logger.getGlobal();
+		log.finest("readCsvLike: loading: " + filename);
+		List<String[]> result = new ArrayList<>();
+		try {
+			for(String line=this.readLine();
+				line!=null; line=this.readLine()){
+				result.add(line.split(separator));
+			}
+		} catch (FileNotFoundException e) {
+			Logger.getGlobal().log(Level.SEVERE, "Error: file not found: " + filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 }
