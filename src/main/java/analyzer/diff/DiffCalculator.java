@@ -2,17 +2,15 @@ package analyzer.diff;
 
 
 import com.github.gumtreediff.actions.ActionGenerator;
+import com.github.gumtreediff.client.Run;
 import com.github.gumtreediff.gen.Generators;
 import com.github.gumtreediff.io.ActionsIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
-import com.github.gumtreediff.tree.ITree;
-import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -47,6 +45,9 @@ class LevenshteinDiff implements DiffCalculator {
 
 class GumTreeDiff implements DiffCalculator {
     public static final String NAME = "gumtree";
+    public GumTreeDiff() {
+        Run.initGenerators();
+    }
 
     @Override
     public String getDiffResult(String... filelist) {
