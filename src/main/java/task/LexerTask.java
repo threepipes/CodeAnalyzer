@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import analyzer.Lexer;
+import utils.Lexer;
 
 public class LexerTask extends Task {
 	public static final String NAME = "lexer"; 
@@ -24,6 +24,6 @@ public class LexerTask extends Task {
 	}
 	
 	private void testParser() {
-		
+
 	}
 }

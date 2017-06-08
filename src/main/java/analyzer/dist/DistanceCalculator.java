@@ -3,7 +3,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import analyzer.Lexer;
+import utils.Lexer;
 
 public abstract class DistanceCalculator {
 	public static final String NAME = "default";

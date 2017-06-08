@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 
-import analyzer.Lexer;
+import utils.Lexer;
 
 public class GeneralVectarize {
 	public int[] build(String filename, String whitelistFile, int n) {

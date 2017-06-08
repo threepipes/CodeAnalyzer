@@ -15,7 +15,7 @@ class NGramTask extends Task {
 			log.severe("Illegal value of n: " + nValue);
 			return;
 		}
-		String whitelistFile = option.getOrDefault("whitelist.txt", DEFAULT_WHITELIST);
+		String whitelistFile = option.getOrDefault("whitelist", DEFAULT_WHITELIST);
 		
 		double[][] dist = getResult(whitelistFile, n);
 		out.printlnJson(dist);
