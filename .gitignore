@@ -4,6 +4,8 @@
 /.vscode/
 /bin/
 /build/
+/libs/
+/out/
 
 /src/main/antlr/
 /src/main/java/cpp/
@@ -11,6 +13,8 @@
 
 .classpath
 .project
+
+log.txt
 
 *.iml
 *.xml

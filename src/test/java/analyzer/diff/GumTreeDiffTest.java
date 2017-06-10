@@ -1,12 +1,15 @@
 package analyzer.diff;
 
 import junit.framework.TestCase;
+import net.arnx.jsonic.JSON;
 import org.junit.Test;
 import utils.Reader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,9 +50,11 @@ public class GumTreeDiffTest extends TestCase {
                     files[i] = ClassLoader.getSystemResource(files[i]).getPath();
                 }
                 String result = diff.getDiffResult(files);
+                HashMap map = JSON.decode(result);
+                List actions = (List)map.getOrDefault("actions", new ArrayList());
                 System.out.println("[result]");
 //                System.out.println(result);
-                log.info(result);
+                log.info(JSON.encode(actions));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -30,7 +30,7 @@ dependencies {
     antlr 'org.antlr:antlr4:4.5'
     testCompile 'junit:junit:4.11'
     compile 'net.arnx:jsonic:1.3.9'
-    compile fileTree(dir: 'libs/gumtree', include: '*.jar')
+    compile fileTree(dir: 'libs', include: '**/*.jar')
 }
 
 compileJava {
@@ -54,16 +54,35 @@ task downloadFile {
     doLast {
         def grammarUrl = 'https://raw.githubusercontent.com/antlr/grammars-v4/master/cpp/'
         def testFileUrl = 'https://raw.githubusercontent.com/antlr/grammars-v4/master/cpp/examples/helloworld.cpp'
-        def fileName = 'CPP14.g4'
+        def grammarName = 'CPP14.g4'
         def testFileName = 'test.cpp'
         download {
-            src grammarUrl + fileName
-            dest 'src/main/antlr/' + fileName
+            src grammarUrl + grammarName
+            dest 'src/main/antlr/' + grammarName
         }
         download {
             src testFileUrl
             dest 'src/test/resources/' + testFileName
         }
+    }
+}
+
+task setGumtree {
+    doLast {
+        def zipUrl = 'https://bintray.com/jrfaller/GumTree/download_file?file_path=gumtree-20161230-2.1.0-SNAPSHOT.zip'
+        def zipName = 'gumtree.zip'
+        def path = 'libs/' + zipName
+        download {
+            src zipUrl
+            dest path
+        }
+        copy {
+            from zipTree(path).matching {
+                include '**/*.jar'
+            }
+            into 'libs'
+        }
+
     }
 }
 
