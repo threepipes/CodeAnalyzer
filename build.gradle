@@ -21,13 +21,16 @@ apply plugin: 'eu.appsatori.fatjar'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
 }
 
 dependencies {
     antlr 'org.antlr:antlr4:4.5'
     testCompile 'junit:junit:4.11'
     compile 'net.arnx:jsonic:1.3.9'
-    compile group: 'com.github.gumtreediff', name: 'gumtree-all', version: '2.0.0'
+    compile fileTree(dir: 'libs/gumtree', include: '*.jar')
 }
 
 compileJava {

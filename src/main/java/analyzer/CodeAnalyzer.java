@@ -13,28 +13,32 @@ import task.Task;
 
 public class CodeAnalyzer {
 	public static void main(String[] args) {
-		CodeAnalyzer tool = new CodeAnalyzer(args);
-		tool.execute();
+		if(args.length == 0) {
+			usage();
+			return;
+		}
+		try {
+			CodeAnalyzer tool = new CodeAnalyzer(args);
+			tool.execute();
+		} catch (Exception e) {
+			Logger.getGlobal().log(Level.SEVERE, e.toString());
+			usage();
+		}
 	}
-	
+
 	private HashMap<String, String> option;
 	/**
 	 * コード解析ツール
 	 * @param args ツールの実行方法を表す引数
 	 * option=内容 の形式で記述
 	 */
-	public CodeAnalyzer(String[] args) {
-		try {
-			option = argParser(args);
-			setLogger();
-		} catch (IllegalArgumentException | FileNotFoundException e) {
-			Logger.getGlobal().log(Level.SEVERE, e.toString());
-			usage();
-		}
+	public CodeAnalyzer(String[] args) throws Exception {
+		option = argParser(args);
+		setLogger();
 	}
 	
-	public void usage() {
-		String usage = "<java command> argkey0=argvalue0 argkey1=argvalue1 ...";
+	public static void usage() {
+		String usage = "usage:\n<java command> argkey0=argvalue0 argkey1=argvalue1 ...";
 		/*
 		 * 現在の設定([]内はargkey, "-"はargvalue)
 		 * [inpath]: 入力ファイル(なしなら標準入力)
@@ -64,9 +68,9 @@ public class CodeAnalyzer {
 	}
 	
 	public HashMap<String, String> argParser(String[] args) throws IllegalArgumentException {
-		Logger.getGlobal().finest("Get args: " + Arrays.toString(args));
 		HashMap<String, String> option = new HashMap<>();
 		String errorMsg = "引数の形式が違います";
+		Logger.getGlobal().finest("Get args: " + Arrays.toString(args));
 		for(String arg: args) {
 			if(!arg.contains("=")) throw new IllegalArgumentException(errorMsg);
 			String[] value = arg.split("=");

@@ -3,12 +3,13 @@ package analyzer.diff;
 
 import com.github.gumtreediff.actions.ActionGenerator;
 import com.github.gumtreediff.client.Run;
-import com.github.gumtreediff.gen.Generators;
+import com.github.gumtreediff.gen.srcml.SrcmlCppTreeGenerator;
 import com.github.gumtreediff.io.ActionsIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.TreeContext;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.logging.Logger;
@@ -70,9 +71,12 @@ class GumTreeDiff implements DiffCalculator {
 
     private String getDiff(TreeContext src, TreeContext dst) {
         Matcher m = Matchers.getInstance().getMatcher(src.getRoot(), dst.getRoot());
+        m.match();
         ActionGenerator g = new ActionGenerator(src.getRoot(), dst.getRoot(), m.getMappings());
+        g.generate();
         StringWriter writer = new StringWriter();
         try {
+//            FileWriter writer = new FileWriter("result.txt");
             ActionsIoUtils.toJson(src, g.getActions(), m.getMappings()).writeTo(writer);
         } catch (Exception e) {
             log.severe(e.toString() + "\nfailed getting diff");
@@ -82,6 +86,6 @@ class GumTreeDiff implements DiffCalculator {
     }
 
     private TreeContext generateITree(String filename) throws IOException{
-        return Generators.getInstance().getTree(filename);
+        return new SrcmlCppTreeGenerator().generateFromFile(filename);
     }
 }
