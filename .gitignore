@@ -6,6 +6,7 @@
 /build/
 /libs/
 /out/
+/testDir/
 
 /src/main/antlr/
 /src/main/java/cpp/
