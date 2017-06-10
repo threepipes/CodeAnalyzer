@@ -24,6 +24,6 @@ class DiffTask extends Task {
 		for(String[] compareList: compareFileLists) {
 			compareResult.add(diff.getDiffResult(compareList));
 		}
-		out.printlnJson(compareResult);
+		out.println(compareResult);
 	}
 }

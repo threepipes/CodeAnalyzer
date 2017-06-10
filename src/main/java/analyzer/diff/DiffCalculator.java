@@ -8,6 +8,7 @@ import com.github.gumtreediff.io.ActionsIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.TreeContext;
+import net.arnx.jsonic.JSON;
 
 import java.io.FileWriter;
 import java.io.IOException;
