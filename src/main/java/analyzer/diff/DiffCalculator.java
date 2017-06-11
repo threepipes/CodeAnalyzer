@@ -13,6 +13,8 @@ import net.arnx.jsonic.JSON;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -54,15 +56,18 @@ class GumTreeDiff implements DiffCalculator {
     @Override
     public String getDiffResult(String... filelist) {
         log.finest("starting getdiff result in GumTreeDiff...");
-        if(filelist.length != 2) {
-            log.severe("size of filelist must be 2, but found: " + filelist.length);
-            log.fine(filelist.toString());
-        }
+        if(filelist.length == 1) return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
         try {
-            TreeContext src = generateITree(filelist[0]);
-            TreeContext dst = generateITree(filelist[1]);
-            String diff = getDiff(src, dst);
-            return diff;
+            TreeContext pre = generateITree(filelist[0]);
+            for(int i = 1; i < filelist.length; i++) {
+                TreeContext nxt = generateITree(filelist[i]);
+                if(i > 1) sb.append(",\n");
+                sb.append(getDiff(pre, nxt));
+            }
+            sb.append("]\n");
+            return sb.toString();
         } catch (IOException e) {
             log.severe(e.toString() + "\nPlease check if your filelist is valid.");
             log.fine(filelist.toString());
