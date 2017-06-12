@@ -8,13 +8,12 @@ import com.github.gumtreediff.io.ActionsIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.TreeContext;
-import net.arnx.jsonic.JSON;
+import utils.Lexer;
+import utils.LevenshteinDistance;
 
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -42,8 +41,28 @@ class LevenshteinDiff implements DiffCalculator {
     public static final String NAME = "leven";
     @Override
     public String getDiffResult(String... filelist) {
-        // TODO
-        return "";
+        log.finest("starting getdiff result in LevenshteinDiff...");
+        if(filelist.length == 1) return "[]";
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        String[] pre = generateTokenList(filelist[0]);
+        for(int i = 1; i < filelist.length; i++) {
+            String[] nxt = generateTokenList(filelist[i]);
+            if(i > 1) sb.append(",\n");
+            sb.append(getDiff(pre, nxt));
+        }
+        sb.append("]\n");
+        return sb.toString();
+    }
+
+    private String getDiff(String[] src, String[] dst) {
+        LevenshteinDistance<String> leven = new LevenshteinDistance<>(src, dst);
+        return String.valueOf(leven.getDist());
+    }
+
+    private String[] generateTokenList(String filename) {
+        Lexer lexer = new Lexer(new File(filename));
+        return lexer.getTokenList().toArray(new String[0]);
     }
 }
 
@@ -56,7 +75,7 @@ class GumTreeDiff implements DiffCalculator {
     @Override
     public String getDiffResult(String... filelist) {
         log.finest("starting getdiff result in GumTreeDiff...");
-        if(filelist.length == 1) return "";
+        if(filelist.length == 1) return "[]";
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         try {

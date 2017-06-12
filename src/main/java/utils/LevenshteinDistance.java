@@ -7,7 +7,7 @@ import java.util.List;
  * 距離を求める場合，インスタンスを作成した後getDistを行う
  * 適用された手順(挿入・削除・置換)を得たい場合はfindOperationsを行う
  */
-class LevenshteinDistance<T>{
+public class LevenshteinDistance<T>{
 	T[] t1, t2;
 	int len1, len2;
 	int[][] table;
