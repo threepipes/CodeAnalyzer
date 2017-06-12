@@ -56,7 +56,7 @@ public class CodeAnalyzerTest extends TestCase{
                 "#include <iostream>\n" +
                 "using namespace std;\n" +
                 "void main() {\n" +
-                "    int n, m;\n" +
+                "    int n, m, a;\n" +
                 "    cin >> n >> m;\n" +
                 "    cout << n + m << endl;\n" +
                 "}";
