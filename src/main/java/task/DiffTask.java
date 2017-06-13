@@ -15,6 +15,7 @@ class DiffTask extends Task {
 	public void doTask(HashMap<String, String> option) {
 		DiffCalculator diff = DiffCalculator.getCalculator(
 				option.getOrDefault("method", ""));
+		log.finest("task diff started");
 		if(diff == null) {
 			log.severe("failed to get method");
 			return;
@@ -24,6 +25,7 @@ class DiffTask extends Task {
 		for(String[] compareList: compareFileLists) {
 			compareResult.add(diff.getDiffResult(compareList));
 		}
+		log.finest("task diff completed");
 		out.println(compareResult);
 	}
 }

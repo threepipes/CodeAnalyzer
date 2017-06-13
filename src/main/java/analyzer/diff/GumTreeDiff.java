@@ -13,6 +13,7 @@ import java.io.StringWriter;
 
 class GumTreeDiff implements DiffCalculator {
     public static final String NAME = "gumtree";
+    private static final String EMPTY_RESULT = "{\"matches\":[], \"actions\":[]}";
     public GumTreeDiff() {
         Run.initGenerators();
     }
@@ -28,9 +29,11 @@ class GumTreeDiff implements DiffCalculator {
             for(int i = 1; i < filelist.length; i++) {
                 TreeContext nxt = generateITree(filelist[i]);
                 if(i > 1) sb.append(",\n");
+                log.finest("comparing: " + filelist[i - 1] + " and " + filelist[i]);
                 sb.append(getDiff(pre, nxt));
             }
             sb.append("]\n");
+            log.finest("successful in getdiff");
             return sb.toString();
         } catch (IOException e) {
             log.severe(e.toString() + "\nPlease check if your filelist is valid.");
@@ -40,6 +43,10 @@ class GumTreeDiff implements DiffCalculator {
     }
 
     private String getDiff(TreeContext src, TreeContext dst) {
+        if(src == null || dst == null) {
+            log.warning("Src or dst are null. Return empty result.");
+            return EMPTY_RESULT;
+        }
         Matcher m = Matchers.getInstance().getMatcher(src.getRoot(), dst.getRoot());
         m.match();
         ActionGenerator g = new ActionGenerator(src.getRoot(), dst.getRoot(), m.getMappings());
@@ -55,6 +62,13 @@ class GumTreeDiff implements DiffCalculator {
     }
 
     private TreeContext generateITree(String filename) throws IOException{
-        return new SrcmlCppTreeGenerator().generateFromFile(filename);
+        log.finest("generating ITree: " + filename);
+        try {
+            return new SrcmlCppTreeGenerator().generateFromFile("C:/Users/GPUPC/Work/Python/CodeForcesCrawler/data/" + filename);
+        } catch (NullPointerException e) {
+            log.warning("failed to generate ITree...");
+            log.severe(e.toString());
+            return null;
+        }
     }
 }

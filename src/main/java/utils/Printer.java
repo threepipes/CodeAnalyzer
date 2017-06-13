@@ -1,17 +1,16 @@
 package utils;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Collection;
 
 import net.arnx.jsonic.JSON;
 
 public class Printer extends PrintWriter{
 	public Printer(String filename) throws IOException {
-		super(new BufferedWriter(new FileWriter(filename)));
+		super(new BufferedWriter(
+				new OutputStreamWriter(
+						new FileOutputStream(new File(filename)), "utf-8"
+				)));
 	}
 	
 	public Printer() {
