@@ -1,5 +1,7 @@
 package analyzer.diff;
 
+import com.github.gumtreediff.tree.Tree;
+import com.github.gumtreediff.tree.TreeContext;
 import junit.framework.TestCase;
 import net.arnx.jsonic.JSON;
 import org.junit.Test;
@@ -8,6 +10,8 @@ import utils.Reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +54,8 @@ public class GumTreeDiffTest extends TestCase {
                     files[i] = ClassLoader.getSystemResource(files[i]).getPath();
                 }
                 String result = diff.getDiffResult(files);
-                HashMap map = JSON.decode(result);
-                List actions = (List)map.getOrDefault("actions", new ArrayList());
+                List<HashMap> map = JSON.decode(result);
+                List actions = (List)map.get(0).getOrDefault("actions", new ArrayList());
                 System.out.println("[result]");
 //                System.out.println(result);
                 log.info(JSON.encode(actions));
@@ -60,5 +64,33 @@ public class GumTreeDiffTest extends TestCase {
             e.printStackTrace();
             fail();
         }
+    }
+
+    @Test
+    public void testGenerateITree()
+            throws NoSuchMethodException,
+            IllegalAccessException,
+            InvocationTargetException {
+        Logger log = Logger.getGlobal();
+        log.info("test generate itree");
+        GumTreeDiff gumtree = new GumTreeDiff();
+        Method method = GumTreeDiff.class.getDeclaredMethod("generateITree", String.class);
+        method.setAccessible(true);
+
+        for(int i = 0; i < 2; i++) {
+            String path = ClassLoader.getSystemResource(String.format("sample/crlf_sample_%02d.cpp", i)).getPath();
+            log.info("generating: " + path);
+            TreeContext tree = generateITree(path, method, gumtree);
+            assertNotNull(tree);
+            System.out.println(tree);
+        }
+
+        log.info("success generating itree");
+    }
+
+    private TreeContext generateITree(String path, Method method, GumTreeDiff gumtree)
+            throws IllegalAccessException,
+            InvocationTargetException {
+        return (TreeContext)method.invoke(gumtree, path);
     }
 }

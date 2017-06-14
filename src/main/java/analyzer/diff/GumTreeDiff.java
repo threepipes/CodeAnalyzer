@@ -31,6 +31,7 @@ class GumTreeDiff implements DiffCalculator {
                 if(i > 1) sb.append(",\n");
                 log.finest("comparing: " + filelist[i - 1] + " and " + filelist[i]);
                 sb.append(getDiff(pre, nxt));
+                pre = nxt;
             }
             sb.append("]\n");
             log.finest("successful in getdiff");
@@ -64,7 +65,7 @@ class GumTreeDiff implements DiffCalculator {
     private TreeContext generateITree(String filename) throws IOException{
         log.finest("generating ITree: " + filename);
         try {
-            return new SrcmlCppTreeGenerator().generateFromFile("C:/Users/GPUPC/Work/Python/CodeForcesCrawler/data/" + filename);
+            return new SrcmlCppTreeGenerator().generateFromFile(filename);
         } catch (NullPointerException e) {
             log.warning("failed to generate ITree...");
             log.severe(e.toString());

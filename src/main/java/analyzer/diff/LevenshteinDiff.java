@@ -18,6 +18,7 @@ class LevenshteinDiff implements DiffCalculator {
             String[] nxt = generateTokenList(filelist[i]);
             if(i > 1) sb.append(",\n");
             sb.append(getDiff(pre, nxt));
+            pre = nxt;
         }
         sb.append("]\n");
         return sb.toString();
