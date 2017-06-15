@@ -93,4 +93,42 @@ public class GumTreeDiffTest extends TestCase {
             InvocationTargetException {
         return (TreeContext)method.invoke(gumtree, path);
     }
+
+    @Test
+    public void testCheckITreeChange()
+            throws NoSuchMethodException,
+            IllegalAccessException,
+            InvocationTargetException {
+
+        Logger log = Logger.getGlobal();
+        log.info("test checking itree");
+        GumTreeDiff gumtree = new GumTreeDiff();
+        Method method = GumTreeDiff.class.getDeclaredMethod("generateITree", String.class);
+        method.setAccessible(true);
+
+        List<TreeContext> list = new ArrayList<>();
+        for(int i = 0; i < 2; i++) {
+            String path = ClassLoader.getSystemResource(String.format("sample/crlf_sample_%02d.cpp", i)).getPath();
+            log.info("generating: " + path);
+            TreeContext tree = generateITree(path, method, gumtree);
+            list.add(tree);
+            assertNotNull(tree);
+        }
+
+        Method diffMethod = GumTreeDiff.class.getDeclaredMethod("getDiff", TreeContext.class, TreeContext.class);
+        diffMethod.setAccessible(true);
+        String diff = (String)diffMethod.invoke(gumtree, list.get(0), list.get(1));
+
+        List<TreeContext> list2 = new ArrayList<>();
+        for(int i = 0; i < 2; i++) {
+            String path = ClassLoader.getSystemResource(String.format("sample/crlf_sample_%02d.cpp", i)).getPath();
+            TreeContext tree = generateITree(path, method, gumtree);
+            list2.add(tree);
+        }
+
+        String diff2 = (String)diffMethod.invoke(gumtree, list.get(0), list2.get(0));
+        System.out.println(diff2);
+
+        log.info("finish checking chenge");
+    }
 }

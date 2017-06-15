@@ -6,10 +6,12 @@ import com.github.gumtreediff.gen.srcml.SrcmlCppTreeGenerator;
 import com.github.gumtreediff.io.ActionsIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
+import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.stream.IntStream;
 
 class GumTreeDiff implements DiffCalculator {
     public static final String NAME = "gumtree";
@@ -24,23 +26,29 @@ class GumTreeDiff implements DiffCalculator {
         if(filelist.length == 1) return "[]";
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        try {
-            TreeContext pre = generateITree(filelist[0]);
-            for(int i = 1; i < filelist.length; i++) {
+        String[] result = new String[filelist.length - 1];
+        IntStream.range(1, filelist.length).parallel().forEach(i -> {
+            System.out.println(i);
+            try {
+                TreeContext pre = generateITree(filelist[i - 1]);
                 TreeContext nxt = generateITree(filelist[i]);
-                if(i > 1) sb.append(",\n");
-                log.finest("comparing: " + filelist[i - 1] + " and " + filelist[i]);
-                sb.append(getDiff(pre, nxt));
-                pre = nxt;
+                String res = "";
+                if (i > 1) res += ",\n";
+                log.finest(String.format("comparing: %s(%d) and %s(%d)",
+                        filelist[i - 1], pre.hashCode(), filelist[i], nxt.hashCode()));
+                res += getDiff(pre, nxt);
+                result[i - 1] = res;
+            } catch (IOException e) {
+                log.severe(e.toString() + "\nPlease check if your filelist is valid.");
+                log.fine(filelist.toString());
             }
-            sb.append("]\n");
-            log.finest("successful in getdiff");
-            return sb.toString();
-        } catch (IOException e) {
-            log.severe(e.toString() + "\nPlease check if your filelist is valid.");
-            log.fine(filelist.toString());
+        });
+        for(String res: result) {
+            sb.append(res);
         }
-        return null;
+        sb.append("]\n");
+        log.finest("successful in getdiff");
+        return sb.toString();
     }
 
     private String getDiff(TreeContext src, TreeContext dst) {
@@ -71,5 +79,19 @@ class GumTreeDiff implements DiffCalculator {
             log.severe(e.toString());
             return null;
         }
+    }
+}
+
+class Result implements Comparable<Result> {
+    int idx;
+    String result;
+    public Result(int idx, String result) {
+        this.idx = idx;
+        this.result = result;
+    }
+
+    @Override
+    public int compareTo(Result o) {
+        return idx - o.idx;
     }
 }

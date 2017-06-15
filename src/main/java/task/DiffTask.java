@@ -3,9 +3,11 @@ package task;
 import analyzer.diff.DiffCalculator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 class DiffTask extends Task {
 	public static final String NAME = "diff";
@@ -21,11 +23,12 @@ class DiffTask extends Task {
 			return;
 		}
 		List<String[]> compareFileLists = in.readCsvLike(",");
-		List<String> compareResult = new ArrayList<>();
-		for(String[] compareList: compareFileLists) {
-			compareResult.add(diff.getDiffResult(compareList));
-		}
+//		List<String> compareResult = new ArrayList<>();
+		String[] compareResult = new String[compareFileLists.size()];
+		IntStream.range(0, compareResult.length).parallel().forEach(i -> {
+			compareResult[i] = diff.getDiffResult(compareFileLists.get(i));
+		});
 		log.finest("task diff completed");
-		out.println(compareResult);
+		out.println(Arrays.toString(compareResult));
 	}
 }
