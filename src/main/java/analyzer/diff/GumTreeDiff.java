@@ -8,12 +8,13 @@ import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
+import utils.GumTreeUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.stream.IntStream;
 
-class GumTreeDiff implements DiffCalculator {
+public class GumTreeDiff implements DiffCalculator {
     public static final String NAME = "gumtree";
     private static final String EMPTY_RESULT = "{\"matches\":[], \"actions\":[]}";
     public GumTreeDiff() {
@@ -70,7 +71,7 @@ class GumTreeDiff implements DiffCalculator {
         return writer.toString();
     }
 
-    private TreeContext generateITree(String filename) throws IOException{
+    public static TreeContext generateITree(String filename) throws IOException{
         log.finest("generating ITree: " + filename);
         try {
             return new SrcmlCppTreeGenerator().generateFromFile(filename);
