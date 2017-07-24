@@ -16,6 +16,8 @@ public interface DiffCalculator {
                 return new LevenshteinDiff();
             case GumTreeDiff.NAME:
                 return new GumTreeDiff();
+            case GumTreeDiffPosition.NAME:
+                return new GumTreeDiffPosition();
         }
         log.severe("Wrong method name: " + name
                 + "\nexpected [leven, gumtree]");

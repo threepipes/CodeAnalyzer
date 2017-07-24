@@ -7,15 +7,21 @@ import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.ITree;
 import com.github.gumtreediff.tree.TreeContext;
+import net.arnx.jsonic.JSON;
+import utils.NodeChecker;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static analyzer.diff.GumTreeDiff.generateITree;
 
 public class TreeTester {
     public static void main(String[] args) {
         TreeWalker walker = new TreeWalker();
-        walker.dumpTree();
+        walker.testDiff();
     }
 }
 
@@ -25,20 +31,11 @@ class TreeWalker {
         String[] path = new String[2];
         for(int i = 0; i < 2; i++) {
             path[i] = ClassLoader.getSystemResource(
-                    String.format("sample/crlf_sample_%02d.cpp", 0)
+                    String.format("sample/crlf_sample_%02d.cpp", i)
             ).getPath();
         }
         src = path[0];
         dst = path[1];
-    }
-
-    private TreeContext generateITree(String path) {
-        try {
-            return GumTreeDiff.generateITree(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public void dumpTree() {
@@ -46,8 +43,52 @@ class TreeWalker {
         if(tree == null) return;
         ITree root = tree.getRoot();
         for(ITree node: root.preOrder()) {
-            System.out.println(tree.getTypeLabel(node));
+            System.out.println(tree.getTypeLabel(node) + " " + node.getId()
+                    + " " + node.getLabel() + " " + node.toShortString()
+                    + " " + node.toPrettyString(tree));
         }
+    }
+
+    public void test() {
+        TreeContext srcTree = generateITree(src);
+        TreeContext dstTree = generateITree(dst);
+        List<Action> actions = getActions(srcTree, dstTree);
+        for (Action act: actions) {
+            ITree node = act.getNode();
+            String actname = act.getName();
+            TreeContext context = actname.equals("INS") ? dstTree : srcTree;
+            List<String> info = new NodeChecker().nodeType(node, context);
+            System.out.println(actname + " " + info);
+        }
+    }
+
+    ITree getRoot(ITree node) {
+        int dep = node.getDepth();
+        for (int i = 0; i < dep; i++) {
+            node = node.getParent();
+        }
+        return node;
+    }
+
+    public void testDiff() {
+        String res = getDiffPosition(generateITree(src), generateITree(dst));
+        System.out.println(res);
+    }
+
+    public String getDiffPosition(TreeContext src, TreeContext dst) {
+        List<HashMap<String, Object>> diffList = new ArrayList<>();
+        List<Action> actions = getActions(src, dst);
+        for (Action act: actions) {
+            ITree node = act.getNode();
+            String actname = act.getName();
+            TreeContext context = actname.equals("INS") ? dst : src;
+            List<String> info = new NodeChecker().nodeType(node, context);
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("type", actname);
+            map.put("info", info);
+            diffList.add(map);
+        }
+        return JSON.encode(diffList);
     }
 
     private List<Action> getActions(TreeContext src, TreeContext dst) {
@@ -65,3 +106,4 @@ class TreeWalker {
         }
     }
 }
+

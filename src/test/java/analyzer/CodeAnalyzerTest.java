@@ -13,6 +13,25 @@ public class CodeAnalyzerTest extends TestCase{
     private static final String LOG_PATH = DIR + "log.txt";
     private static final String INPUT_PATH = DIR + "input.txt";
     private static final String OUTPUT_PATH = DIR + "output.txt";
+
+    private static final String SOURCE_A = "" +
+            "#include <iostream>\n" +
+            "using namespace std;\n" +
+            "void main() {\n" +
+            "    int n, m, a;\n" +
+            "    cin >> n >> m;\n" +
+            "    cout << n + m << endl;\n" +
+            "}";
+    private static final String SOURCE_B = "" +
+            "#include <iostream>\n" +
+            "using namespace std;\n" +
+            "void main() {\n" +
+            "    int n, m;\n" +
+            "    cin >> n >> m;\n" +
+            "    n = n * n;\n" +
+            "    cout << n * m << endl;\n" +
+            "}";
+
     public CodeAnalyzerTest() {
         initTest();
     }
@@ -41,6 +60,17 @@ public class CodeAnalyzerTest extends TestCase{
         return new CodeAnalyzer(args);
     }
 
+    void generateTestSource() {
+        String pathA = DIR + "aaa.cpp";
+        String pathB = DIR + "bbb.cpp";
+        String fileList = pathA + "," + pathB + "\n";
+        String fileA = SOURCE_A;
+        String fileB = SOURCE_B;
+        FileUtil.writeToFile(fileList, INPUT_PATH);
+        FileUtil.writeToFile(fileA, pathA);
+        FileUtil.writeToFile(fileB, pathB);
+    }
+
     @Test
     public void testGumTreeDiff() {
         HashMap<String, String> option = new HashMap<String, String>() {
@@ -49,29 +79,7 @@ public class CodeAnalyzerTest extends TestCase{
                 put("method", "gumtree");
             }
         };
-        String pathA = DIR + "aaa.cpp";
-        String pathB = DIR + "bbb.cpp";
-        String fileList = pathA + "," + pathB + "\n";
-        String fileA = "" +
-                "#include <iostream>\n" +
-                "using namespace std;\n" +
-                "void main() {\n" +
-                "    int n, m, a;\n" +
-                "    cin >> n >> m;\n" +
-                "    cout << n + m << endl;\n" +
-                "}";
-        String fileB = "" +
-                "#include <iostream>\n" +
-                "using namespace std;\n" +
-                "void main() {\n" +
-                "    int n, m;\n" +
-                "    cin >> n >> m;\n" +
-                "    n = n * n;\n" +
-                "    cout << n * m << endl;\n" +
-                "}";
-        FileUtil.writeToFile(fileList, INPUT_PATH);
-        FileUtil.writeToFile(fileA, pathA);
-        FileUtil.writeToFile(fileB, pathB);
+        generateTestSource();
         try {
             CodeAnalyzer analyzer = generateInstance(option);
             analyzer.execute();
@@ -80,6 +88,27 @@ public class CodeAnalyzerTest extends TestCase{
             fail();
         }
         String result = FileUtil.readFromFile(OUTPUT_PATH);
+        System.out.println(result);
+    }
+
+    @Test
+    public void testGumTreeDiffPos() {
+        HashMap<String, String> option = new HashMap<String, String>() {
+            {
+                put("task", "diff");
+                put("method", "gumtreepos");
+            }
+        };
+        generateTestSource();
+        try {
+            CodeAnalyzer analyzer = generateInstance(option);
+            analyzer.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+        String result = FileUtil.readFromFile(OUTPUT_PATH);
+        System.out.println("GumTreePos");
         System.out.println(result);
     }
 }

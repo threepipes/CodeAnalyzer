@@ -6,9 +6,7 @@ import com.github.gumtreediff.gen.srcml.SrcmlCppTreeGenerator;
 import com.github.gumtreediff.io.ActionsIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
-import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
-import utils.GumTreeUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -30,19 +28,14 @@ public class GumTreeDiff implements DiffCalculator {
         String[] result = new String[filelist.length - 1];
         IntStream.range(1, filelist.length).parallel().forEach(i -> {
             System.out.println(i);
-            try {
-                TreeContext pre = generateITree(filelist[i - 1]);
-                TreeContext nxt = generateITree(filelist[i]);
-                String res = "";
-                if (i > 1) res += ",\n";
-                log.finest(String.format("comparing: %s(%d) and %s(%d)",
-                        filelist[i - 1], pre.hashCode(), filelist[i], nxt.hashCode()));
-                res += getDiff(pre, nxt);
-                result[i - 1] = res;
-            } catch (IOException e) {
-                log.severe(e.toString() + "\nPlease check if your filelist is valid.");
-                log.fine(filelist.toString());
-            }
+            TreeContext pre = generateITree(filelist[i - 1]);
+            TreeContext nxt = generateITree(filelist[i]);
+            String res = "";
+            if (i > 1) res += ",\n";
+            log.finest(String.format("comparing: %s(%d) and %s(%d)",
+                    filelist[i - 1], pre.hashCode(), filelist[i], nxt.hashCode()));
+            res += getDiff(pre, nxt);
+            result[i - 1] = res;
         });
         for(String res: result) {
             sb.append(res);
@@ -71,11 +64,11 @@ public class GumTreeDiff implements DiffCalculator {
         return writer.toString();
     }
 
-    public static TreeContext generateITree(String filename) throws IOException{
+    public static TreeContext generateITree(String filename) {
         log.finest("generating ITree: " + filename);
         try {
             return new SrcmlCppTreeGenerator().generateFromFile(filename);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IOException e) {
             log.warning("failed to generate ITree...");
             log.severe(e.toString());
             return null;
