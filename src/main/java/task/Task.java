@@ -13,20 +13,22 @@ public abstract class Task {
 	protected static Logger log = Logger.getGlobal();
 	public static Task getTask(String name) {
 		switch(name) {
-		case LexerTask.NAME:
-			return new LexerTask();
-		case DistanceTask.NAME:
-			return new DistanceTask();
-		case DiffTask.NAME:
-			return new DiffTask();
-		case TestTask.NAME:
-			return new TestTask();
-		case NGramTask.NAME:
-			return new NGramTask();
-		case NGramCountTask.NAME:
-			return new NGramCountTask();
-		default:
-			throw new IllegalArgumentException("Task option error: " + name);
+			case LexerTask.NAME:
+				return new LexerTask();
+			case DistanceTask.NAME:
+				return new DistanceTask();
+			case DiffTask.NAME:
+				return new DiffTask();
+			case TestTask.NAME:
+				return new TestTask();
+			case NGramTask.NAME:
+				return new NGramTask();
+			case NGramCountTask.NAME:
+				return new NGramCountTask();
+			case TreeTask.NAME:
+				return new TreeTask();
+			default:
+				throw new IllegalArgumentException("Task option error: " + name);
 		}
 	}
 	

@@ -21,7 +21,8 @@ import static analyzer.diff.GumTreeDiff.generateITree;
 public class TreeTester {
     public static void main(String[] args) {
         TreeWalker walker = new TreeWalker();
-        walker.testDiff();
+//        walker.testDiff();
+        walker.dumpTree();
     }
 }
 
@@ -43,10 +44,20 @@ class TreeWalker {
         if(tree == null) return;
         ITree root = tree.getRoot();
         for(ITree node: root.preOrder()) {
-            System.out.println(tree.getTypeLabel(node) + " " + node.getId()
-                    + " " + node.getLabel() + " " + node.toShortString()
-                    + " " + node.toPrettyString(tree));
+            List<ITree> toRoot = walk2Root(node);
+            for(ITree v: toRoot) {
+                System.out.print("[" + nodeToString(v, tree) + "],\t");
+            }
+            System.out.println();
         }
+    }
+
+    private String nodeToString(ITree node, TreeContext tree) {
+//        return tree.getTypeLabel(node)
+//                    + " " + node.getId()
+//                    + " " + node.getLabel() + " " + node.toShortString()
+//                    + " " + node.toPrettyString(tree);
+        return node.toPrettyString(tree);
     }
 
     public void test() {
@@ -68,6 +79,17 @@ class TreeWalker {
             node = node.getParent();
         }
         return node;
+    }
+
+    List<ITree> walk2Root(ITree node) {
+        List<ITree> list = new ArrayList<>();
+        int dep = node.getDepth();
+        list.add(node);
+        for (int i = 0; i < dep; i++) {
+            node = node.getParent();
+            list.add(node);
+        }
+        return list;
     }
 
     public void testDiff() {

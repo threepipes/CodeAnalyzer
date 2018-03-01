@@ -9,6 +9,7 @@ import com.github.gumtreediff.tree.TreeContext;
 import net.arnx.jsonic.JSON;
 import utils.INodeChecker;
 import utils.NodeChecker;
+import utils.NodeCheckerAll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class GumTreeDiffPosition implements DiffCalculator {
     public static final String NAME = "gumtreepos";
     private INodeChecker chekcer;
     public GumTreeDiffPosition() {
-        chekcer = new NodeChecker();
+        chekcer = new NodeCheckerAll();
     }
 
     @Override

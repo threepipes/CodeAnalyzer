@@ -26,6 +26,10 @@ import cpp.CPP14Parser.MemberdeclarationContext;
 import cpp.CPP14Parser.PostfixexpressionContext;
 
 public class Lexer {
+	public static List<String> getTokenList(String filename) {
+	    return new Lexer(new File(filename)).getTokenList();
+    }
+
 	BufferedReader in;
 	public Lexer(File file) {
 		try {
